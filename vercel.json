@@ -1,13 +1,7 @@
 {
   "functions": {
-    "projects/resume-portfolio-generator/api/generate.py": {
+    "api/generate.py": {
       "includeFiles": "projects/resume-portfolio-generator/{template.html,style.css,resume.txt}"
     }
-  },
-  "rewrites": [
-    {
-      "source": "/api/generate",
-      "destination": "/projects/resume-portfolio-generator/api/generate"
-    }
-  ]
+  }
 }
