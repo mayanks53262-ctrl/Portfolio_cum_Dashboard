@@ -1,7 +1,6 @@
 {
   "functions": {
     "projects/resume-portfolio-generator/api/generate.py": {
-      "runtime": "python3.12",
       "includeFiles": "projects/resume-portfolio-generator/{template.html,style.css,resume.txt}"
     }
   },
