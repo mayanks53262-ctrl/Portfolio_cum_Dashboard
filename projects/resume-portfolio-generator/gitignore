@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+portfolio.html
+photo.jpg
+.DS_Store
+.vscode/
+.idea/

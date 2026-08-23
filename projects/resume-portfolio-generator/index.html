@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Portfolio Generator</title>
+  <link rel="stylesheet" href="launcher.css">
+</head>
+<body>
+  <div id="creatorApp" class="creator-container">
+    <header class="launcher-header">
+      <div class="badge">AIML GLA Bootcamp '26</div>
+      <h1>AI Resume to Portfolio Generator</h1>
+    </header>
+
+    <main class="launcher-card">
+      <div class="mode-selector">
+        <button type="button" class="mode-btn active" id="modePaste">Paste Resume Text</button>
+        <button type="button" class="mode-btn" id="modeDefault">Sample Portfolio</button>
+      </div>
+
+      <div id="pasteSection">
+        <textarea id="resumeInput" placeholder="Paste your resume text here..."></textarea>
+      </div>
+      
+      <div id="defaultSection" hidden>
+        <div class="info-alert">
+            <strong>Sample Mode Active</strong><br>
+            Click on Generate Portfolio to see a sample portfolio.
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="submit-btn" id="generateBtn">Generate Portfolio</button>
+      </div>
+
+      <div id="statusBox" class="status-box" hidden>
+        <div class="spinner"></div>
+        <span>AI is processing your request...</span>
+      </div>
+      <div id="errorBox" class="error-box" hidden></div>
+    </main>
+  </div>
+
+  <div id="portfolioViewer" class="portfolio-viewer" data-viewer-theme="vivid" hidden>
+    <div class="viewer-bar">
+      <div class="viewer-left"><span class="live-indicator"></span><span>Live Portfolio</span></div>
+      <button type="button" id="exitViewerBtn" class="viewer-btn">← Back to Generator</button>
+    </div>
+    <iframe id="portfolioFrame"></iframe>
+  </div>
+
+  <script>
+    let useDefaultMode = false;
+    const portfolioViewer = document.getElementById('portfolioViewer');
+
+    // Theme Sync Listener: Catch theme changes from the iframe
+    window.addEventListener('message', (event) => {
+      if (event.data.type === 'THEME_UPDATE') {
+        portfolioViewer.dataset.viewerTheme = event.data.theme;
+      }
+    });
+
+    document.getElementById('modePaste').onclick = function() {
+      useDefaultMode = false;
+      this.classList.add('active');
+      document.getElementById('modeDefault').classList.remove('active');
+      document.getElementById('pasteSection').hidden = false;
+      document.getElementById('defaultSection').hidden = true;
+    };
+
+    document.getElementById('modeDefault').onclick = function() {
+      useDefaultMode = true;
+      this.classList.add('active');
+      document.getElementById('modePaste').classList.remove('active');
+      document.getElementById('pasteSection').hidden = true;
+      document.getElementById('defaultSection').hidden = false;
+    };
+
+    document.getElementById('exitViewerBtn').onclick = () => {
+      portfolioViewer.hidden = true;
+      document.getElementById('creatorApp').hidden = false;
+      document.getElementById('portfolioFrame').srcdoc = '';
+    };
+
+    async function generate() {
+      const errorBox = document.getElementById('errorBox');
+      const generateBtn = document.getElementById('generateBtn');
+      const statusBox = document.getElementById('statusBox');
+      errorBox.hidden = true;
+      statusBox.hidden = false;
+      generateBtn.disabled = true;
+
+      try {
+        const response = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            resume_text: document.getElementById('resumeInput').value, 
+            use_default: useDefaultMode 
+          })
+        });
+
+        const data = await response.json();
+        if (data.html) {
+          portfolioViewer.dataset.viewerTheme = data.theme; // Set initial bar color
+          document.getElementById('portfolioFrame').srcdoc = data.html;
+          document.getElementById('creatorApp').hidden = true;
+          portfolioViewer.hidden = false;
+        } else {
+          throw new Error(data.error || "Generation failed.");
+        }
+      } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.hidden = false;
+      } finally {
+        statusBox.hidden = true;
+        generateBtn.disabled = false;
+      }
+    }
+    generateBtn.onclick = generate;
+  </script>
+</body>
+</html>
