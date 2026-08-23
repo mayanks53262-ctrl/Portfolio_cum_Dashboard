@@ -1,0 +1,18 @@
+{
+  "functions": {
+    "projects/resume-portfolio-generator/api/generate.py": {
+      "runtime": "python3.12",
+      "includeFiles": [
+        "projects/resume-portfolio-generator/template.html",
+        "projects/resume-portfolio-generator/style.css",
+        "projects/resume-portfolio-generator/resume.txt"
+      ]
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/generate",
+      "destination": "/projects/resume-portfolio-generator/api/generate"
+    }
+  ]
+}
