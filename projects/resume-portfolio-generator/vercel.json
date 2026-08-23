@@ -1,5 +1,7 @@
 {
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" }
-  ]
+  "functions": {
+    "api/generate.py": {
+      "includeFiles": "{template.html,style.css,resume.txt}"
+    }
+  }
 }
