@@ -1,4 +1,4 @@
-JOHN DOE
+JOHNNY CLARK
 New York, NY 10001 | (555) 123-4567 | john.doe@email.com
 linkedin.com/in/johndoe | github.com/johndoe
 
